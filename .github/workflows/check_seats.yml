@@ -1,0 +1,23 @@
+name: Check Etihad A380 F (AA)
+on:
+  schedule:
+    - cron: "*/30 * * * *"      # 30분마다 실행 (원하면 변경 가능)
+  workflow_dispatch: {}          # 수동 실행 버튼
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          pip install playwright requests
+          python -m playwright install chromium
+      - name: Run
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
